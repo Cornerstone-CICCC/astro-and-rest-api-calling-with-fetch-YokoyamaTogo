@@ -1,0 +1,115 @@
+---
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Posts Manager</title>
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <main class="mx-auto space-y-6 p-6">
+      <header>
+        <h1 class="text-3xl font-bold">Posts RESTful API</h1>
+      </header>
+
+      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(32rem,42vw)]">
+        <section class="order-2 grid gap-4 md:grid-cols-2 lg:order-1">
+          <form data-method="GET" data-path="/posts" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">GET /posts</h2>
+            <button class="rounded bg-slate-900 px-4 py-2 text-white" type="submit">List posts</button>
+          </form>
+
+          <form data-method="GET" data-path="/posts/:id" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">GET /posts/:id</h2>
+            <input name="id" type="number" placeholder="id" class="w-full rounded border p-2" required />
+            <button class="rounded bg-slate-900 px-4 py-2 text-white" type="submit">Get post</button>
+          </form>
+
+          <form data-method="POST" data-path="/posts" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">POST /posts</h2>
+            <input name="title" placeholder="title" class="w-full rounded border p-2" required />
+            <textarea name="body" placeholder="body" class="w-full rounded border p-2" required></textarea>
+            <input name="userId" type="number" placeholder="userId" class="w-full rounded border p-2" required />
+            <button class="rounded bg-slate-900 px-4 py-2 text-white" type="submit">Create post</button>
+          </form>
+
+          <form data-method="PUT" data-path="/posts/:id" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">PUT /posts/:id</h2>
+            <input name="id" type="number" placeholder="id" class="w-full rounded border p-2" required />
+            <input name="title" placeholder="title" class="w-full rounded border p-2" required />
+            <textarea name="body" placeholder="body" class="w-full rounded border p-2" required></textarea>
+            <input name="userId" type="number" placeholder="userId" class="w-full rounded border p-2" required />
+            <button class="rounded bg-slate-900 px-4 py-2 text-white" type="submit">Replace post</button>
+          </form>
+
+          <form data-method="PATCH" data-path="/posts/:id" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">PATCH /posts/:id</h2>
+            <input name="id" type="number" placeholder="id" class="w-full rounded border p-2" required />
+            <input name="title" placeholder="title" class="w-full rounded border p-2" />
+            <textarea name="body" placeholder="body" class="w-full rounded border p-2"></textarea>
+            <input name="userId" type="number" placeholder="userId" class="w-full rounded border p-2" />
+            <button class="rounded bg-slate-900 px-4 py-2 text-white" type="submit">Update post</button>
+          </form>
+
+          <form data-method="DELETE" data-path="/posts/:id" class="space-y-3 rounded border bg-white p-4">
+            <h2 class="font-semibold">DELETE /posts/:id</h2>
+            <input name="id" type="number" placeholder="id" class="w-full rounded border p-2" required />
+            <button class="rounded bg-red-700 px-4 py-2 text-white" type="submit">Delete post</button>
+          </form>
+        </section>
+
+        <section class="order-1 rounded border bg-white p-4 lg:sticky lg:top-6 lg:order-2 lg:self-start">
+          <h2 class="mb-3 font-semibold">Server response</h2>
+          <pre id="result" class="h-56 overflow-auto rounded bg-slate-950 p-4 text-sm text-slate-100 lg:h-[calc(100vh-9rem)]">No request yet.</pre>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const api = "http://localhost:3001";
+      const result = document.querySelector("#result");
+
+      const show = (value) => {
+        result.textContent = JSON.stringify(value, null, 2);
+      };
+
+      const bodyFrom = (form) => {
+        const body = {};
+        for (const element of form.elements) {
+          if (!element.name || element.name === "id" || element.value === "") continue;
+          body[element.name] = element.type === "number" ? Number(element.value) : element.value;
+        }
+        return body;
+      };
+
+      document.querySelectorAll("form").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const method = form.dataset.method;
+          const id = form.elements.id?.value;
+          const path = form.dataset.path.replace(":id", id);
+          const options = { method };
+
+          if (["POST", "PUT", "PATCH"].includes(method)) {
+            options.headers = { "Content-Type": "application/json" };
+            options.body = JSON.stringify(bodyFrom(form));
+          }
+
+          try {
+            const response = await fetch(`${api}${path}`, options);
+            const data = await response.json();
+            show({ status: response.status, ok: response.ok, data });
+          } catch (error) {
+            show({ error: error.message });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
