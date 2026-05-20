@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Postman Reference – Express Backend Demo</title>
+    <style>
+      :root {
+        --bg: #f7f7f9;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --code-bg: #0f172a;
+        --code-text: #e2e8f0;
+        --get: #2563eb;
+        --post: #16a34a;
+        --put: #d97706;
+        --patch: #d97706;
+        --delete: #dc2626;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.55;
+      }
+      main {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 4rem;
+      }
+      h1 {
+        margin: 0 0 0.25rem;
+        font-size: 2rem;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin: 0 0 2rem;
+      }
+      .base-url {
+        display: inline-block;
+        background: #fff;
+        border: 1px solid var(--border);
+        padding: 0.4rem 0.7rem;
+        border-radius: 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.95rem;
+      }
+      h2 {
+        margin: 2.5rem 0 1rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 2px solid var(--border);
+      }
+      h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.05rem;
+      }
+      .endpoint {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.25rem 1.4rem;
+        margin-bottom: 1.25rem;
+      }
+      .endpoint-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.75rem;
+      }
+      .verb {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        color: white;
+        letter-spacing: 0.04em;
+      }
+      .verb.GET { background: var(--get); }
+      .verb.POST { background: var(--post); }
+      .verb.PUT { background: var(--put); }
+      .verb.PATCH { background: var(--patch); }
+      .verb.DELETE { background: var(--delete); }
+      .url {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.95rem;
+      }
+      .description {
+        color: var(--muted);
+        margin: 0 0 0.9rem;
+      }
+      .label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin: 0.9rem 0 0.3rem;
+      }
+      pre {
+        background: var(--code-bg);
+        color: var(--code-text);
+        padding: 0.85rem 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        margin: 0;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th, td {
+        padding: 0.4rem 0.6rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      th { color: var(--muted); font-weight: 600; }
+      td code {
+        background: #f1f5f9;
+        padding: 0.05rem 0.35rem;
+        border-radius: 3px;
+      }
+      .steps {
+        background: #fffbeb;
+        border-left: 4px solid #f59e0b;
+        padding: 1rem 1.2rem;
+        border-radius: 6px;
+        margin: 1.5rem 0 2rem;
+      }
+      .steps ol { margin: 0.4rem 0 0 1.2rem; padding: 0; }
+      .steps li { margin-bottom: 0.3rem; }
+      .note {
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin: 0.8rem 0;
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Express Backend – Postman Reference</h1>
+      <p class="subtitle">A walkthrough for testing every endpoint of the demo backend with Postman.</p>
+
+      <p>
+        <strong>Base URL:</strong>
+        <span class="base-url">http://localhost:3001</span>
+      </p>
+
+      <div class="steps">
+        <strong>Before you start</strong>
+        <ol>
+          <li>Start the backend: <code>cd backend &amp;&amp; npm run dev</code>.</li>
+          <li>Open Postman and create a new request (<em>File → New → HTTP Request</em>).</li>
+          <li>Pick the HTTP method from the dropdown (GET, POST, PUT, PATCH, DELETE).</li>
+          <li>Paste the full URL (e.g. <code>http://localhost:3001/posts</code>).</li>
+          <li>For requests with a body: go to <em>Body → raw → JSON</em> and paste the JSON.</li>
+          <li>Click <strong>Send</strong>. Watch the backend terminal — every hit logs the method, URL, body, and result.</li>
+        </ol>
+      </div>
+
+      <div class="note">
+        <strong>Header reminder:</strong> Postman adds the <code>Content-Type: application/json</code> header automatically when you pick <em>raw → JSON</em>. If you use <em>raw → Text</em>, you must set it manually under the <strong>Headers</strong> tab.
+      </div>
+
+      <h2>Endpoints</h2>
+
+      <!-- 1. GET all -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb GET">GET</span>
+          <span class="url">/posts</span>
+        </div>
+        <p class="description">List every post currently in memory.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>GET</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts</code></td></tr>
+          <tr><th>Body</th><td>None</td></tr>
+          <tr><th>Headers</th><td>None required</td></tr>
+        </table>
+
+        <div class="label">Expected response (200 OK)</div>
+        <pre>[
+  { "id": 1, "userId": 1, "title": "Hello world", "body": "This is the first post." },
+  { "id": 2, "userId": 1, "title": "Express demo", "body": "Built with TypeScript." },
+  { "id": 3, "userId": 2, "title": "JSON &amp; APIs", "body": "Lecture sample post." }
+]</pre>
+      </div>
+
+      <!-- 2. GET one -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb GET">GET</span>
+          <span class="url">/posts/:id</span>
+        </div>
+        <p class="description">Fetch a single post by its <code>id</code>.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>GET</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts/1</code></td></tr>
+          <tr><th>Body</th><td>None</td></tr>
+        </table>
+
+        <div class="label">Expected response (200 OK)</div>
+        <pre>{ "id": 1, "userId": 1, "title": "Hello world", "body": "This is the first post." }</pre>
+
+        <div class="label">If the id does not exist (404)</div>
+        <pre>{ "error": "Post 999 not found" }</pre>
+      </div>
+
+      <!-- 3. POST -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb POST">POST</span>
+          <span class="url">/posts</span>
+        </div>
+        <p class="description">Create a new post. The server assigns the next available <code>id</code>.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>POST</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts</code></td></tr>
+          <tr><th>Headers</th><td><code>Content-Type: application/json</code> (auto-set with raw → JSON)</td></tr>
+          <tr><th>Body</th><td>raw → JSON (see below)</td></tr>
+        </table>
+
+        <div class="label">Request body</div>
+        <pre>{
+  "title": "New Post",
+  "body": "Hello from Postman",
+  "userId": 1
+}</pre>
+
+        <div class="label">Expected response (201 Created)</div>
+        <pre>{ "id": 4, "userId": 1, "title": "New Post", "body": "Hello from Postman" }</pre>
+
+        <div class="label">If a required field is missing (400)</div>
+        <pre>{ "error": "title, body, and userId are required" }</pre>
+      </div>
+
+      <!-- 4. PUT -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb PUT">PUT</span>
+          <span class="url">/posts/:id</span>
+        </div>
+        <p class="description">Replace the post with the given <code>id</code>. <strong>All three fields are required.</strong> If the id does not exist, the post is created.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>PUT</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts/1</code></td></tr>
+          <tr><th>Headers</th><td><code>Content-Type: application/json</code></td></tr>
+          <tr><th>Body</th><td>raw → JSON (see below)</td></tr>
+        </table>
+
+        <div class="label">Request body (all fields required)</div>
+        <pre>{
+  "title": "Replaced title",
+  "body": "Full replacement",
+  "userId": 1
+}</pre>
+
+        <div class="label">Expected response (200 OK)</div>
+        <pre>{ "id": 1, "userId": 1, "title": "Replaced title", "body": "Full replacement" }</pre>
+
+        <div class="note">
+          If the id did not exist, you'll get <code>201 Created</code> instead of <code>200 OK</code>, with the same JSON body.
+        </div>
+      </div>
+
+      <!-- 5. PATCH -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb PATCH">PATCH</span>
+          <span class="url">/posts/:id</span>
+        </div>
+        <p class="description">Partially update the post with the given <code>id</code>. Send only the fields you want to change — everything else stays the same.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>PATCH</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts/1</code></td></tr>
+          <tr><th>Headers</th><td><code>Content-Type: application/json</code></td></tr>
+          <tr><th>Body</th><td>raw → JSON (any subset of fields)</td></tr>
+        </table>
+
+        <div class="label">Request body (only what you want to change)</div>
+        <pre>{ "title": "Patched title" }</pre>
+
+        <div class="label">Expected response (200 OK)</div>
+        <pre>{ "id": 1, "userId": 1, "title": "Patched title", "body": "This is the first post." }</pre>
+
+        <div class="label">If the id does not exist (404)</div>
+        <pre>{ "error": "Post 999 not found" }</pre>
+      </div>
+
+      <!-- 6. DELETE -->
+      <div class="endpoint">
+        <div class="endpoint-title">
+          <span class="verb DELETE">DELETE</span>
+          <span class="url">/posts/:id</span>
+        </div>
+        <p class="description">Remove the post with the given <code>id</code>.</p>
+
+        <div class="label">In Postman</div>
+        <table>
+          <tr><th>Method</th><td>DELETE</td></tr>
+          <tr><th>URL</th><td><code>http://localhost:3001/posts/1</code></td></tr>
+          <tr><th>Body</th><td>None</td></tr>
+        </table>
+
+        <div class="label">Expected response (200 OK)</div>
+        <pre>{ "message": "Post 1 deleted" }</pre>
+
+        <div class="label">If the id does not exist (404)</div>
+        <pre>{ "error": "Post 1 not found" }</pre>
+      </div>
+
+      <h2>Status code cheat sheet</h2>
+      <table>
+        <tr><th>Code</th><th>When you'll see it</th></tr>
+        <tr><td><code>200</code> OK</td><td>Successful GET / PATCH / DELETE / PUT (when post existed).</td></tr>
+        <tr><td><code>201</code> Created</td><td>Successful POST, or PUT against an id that didn't yet exist.</td></tr>
+        <tr><td><code>400</code> Bad Request</td><td>POST or PUT missing one of <code>title</code>, <code>body</code>, <code>userId</code>.</td></tr>
+        <tr><td><code>404</code> Not Found</td><td>GET / PATCH / DELETE against an id that doesn't exist.</td></tr>
+      </table>
+
+      <h2>Suggested testing order</h2>
+      <ol>
+        <li><strong>GET /posts</strong> — confirm the seed data (3 posts).</li>
+        <li><strong>POST /posts</strong> — create a new one, note the returned <code>id</code>.</li>
+        <li><strong>GET /posts/:id</strong> — fetch the post you just created.</li>
+        <li><strong>PATCH /posts/:id</strong> — change only the title, see the rest stays.</li>
+        <li><strong>PUT /posts/:id</strong> — replace it entirely.</li>
+        <li><strong>DELETE /posts/:id</strong> — remove it.</li>
+        <li><strong>GET /posts</strong> again — confirm it's gone.</li>
+      </ol>
+
+      <p class="subtitle" style="margin-top: 2.5rem;">
+        Tip: keep the backend terminal visible while you test. Every request prints a timestamped log with the method, URL, parsed body, and the action taken.
+      </p>
+    </main>
+  </body>
+</html>
